@@ -49,7 +49,7 @@ const addCountryHTML = countryData => {
     const imageDiv = document.createElement('div');
     imageDiv.className = "country-flag";
     const flagImage = document.createElement('img');
-    flagImage.src = png;
+    flagImage.src = svg;
     imageDiv.appendChild(flagImage);
     newHTML.appendChild(imageDiv);
 
@@ -61,6 +61,7 @@ const addCountryHTML = countryData => {
     countryInfoDiv.appendChild(h2);
 
     const ul = document.createElement('ul');
+    ul.className = "country-brief";
     const population_li = addInfoLi("population",population);
     const region_li = addInfoLi("region",region);
     const capital_li = addInfoLi("capital",capital); 
