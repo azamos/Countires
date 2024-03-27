@@ -64,6 +64,10 @@ const intialise = async () => {
   if(!fromLs){
     countriesArr = await fetch(URL).then(_=>_.json());
     countriesArr = countriesArr.splice(0,limit);
+    countriesArr = 
+    countriesArr.map(
+      ({flags, capital, name, population, region})=>
+      ({flags, capital, name, population, region}));
     let stringed = JSON.stringify(countriesArr);
     localStorage.setItem(COUNTRIES_KEY,stringed);
   }
