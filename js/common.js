@@ -1,5 +1,6 @@
 let darkMode = false;
-const toggleTheme = () => {
+
+const applyTheme = () => {
   document.body.classList.toggle("dark-theme");
   let iconEl;
   if (darkMode) {
@@ -11,5 +12,9 @@ const toggleTheme = () => {
   }
   iconEl.classList.toggle("fa-moon");
   iconEl.classList.toggle("fa-sun");
+};
+
+const toggleTheme = () => {
+  applyTheme();
   darkMode = !darkMode;
 };

@@ -1,6 +1,6 @@
 const limit = 10;
 const relevantFields =
-  "tid,name,capital,flags,population,region,subregion,currencies,languages,borders";
+  "tld,name,capital,flags,population,region,subregion,currencies,languages,borders";
 
 const getRelevantURL = (url) => `${url}?fields=${relevantFields}`;
 
