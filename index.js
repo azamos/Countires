@@ -121,6 +121,7 @@ const allURL = "https://restcountries.com/v3.1/all";
 const COUNTRIES_KEY = "Countries";
 
 const intialise = async () => {
+  setThemeIfNeeded();
   freeChildren();
   const fromLs = localStorage.getItem(COUNTRIES_KEY);
   let countriesArr;
