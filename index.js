@@ -3,7 +3,7 @@ const limit = 10;
 const freeChildren = (
   container = document.getElementById("countries-container")
 ) => {
-  while(container.firstChild){
+  while (container.firstChild) {
     container.removeChild(container.firstChild);
   }
 };
@@ -14,6 +14,9 @@ const addInfoLi = (infoType, infoValue) => {
   strong.innerText = `${infoType}: `;
   li.appendChild(strong);
   const p = document.createElement("p");
+  if(!infoValue){
+    infoValue = "N/A";
+  }
   p.innerText = infoValue.toString();
   li.appendChild(p);
   return li;
@@ -84,22 +87,50 @@ const intialise = async () => {
 };
 
 const regionURL = "https://restcountries.com/v3.1/region";
-const searchByRegion = async region => {
+const searchByRegion = async (region) => {
   const thisRegionURL = `${regionURL}/${region}`;
   freeChildren();
-  regionCountires = await fetch(thisRegionURL).then(_=>_.json()).catch(e=>console.log(e));
-  regionCountires.forEach(cInReg=>addCountryHTML(cInReg));
+  regionCountires = await fetch(thisRegionURL)
+    .then((_) => _.json())
+    .catch((e) => console.log(e));
+  regionCountires.forEach((cInReg) => addCountryHTML(cInReg));
+};
+
+const nameURL = "https://restcountries.com/v3.1/name";
+
+const fetchAutoComSuggestions = async partialMatch => {
+  const thisNameURL = `${nameURL}/${partialMatch.trim()}`;
+  try {
+    let matches = await fetch(thisNameURL).then(_=>_.json());
+    if (matches.length) {
+      freeChildren();
+      matches.forEach((p) => addCountryHTML(p));
+    }
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 const searchDelay = 300;
-const searchInputChanged = async (e) => {
-  const { value } = e.target;
-  // const searchRequest = setTimeout(()=>{
+let autoCompleteTimer = null;
 
-  // },300)
+const searchInputChanged = async (e) => {
+  if (autoCompleteTimer) {
+    clearTimeout(autoCompleteTimer);
+  }
+  const { value } = e.target;
+  if (value.trim()) {
+    autoCompleteTimer = setTimeout(
+      async () => await fetchAutoComSuggestions(value.trim()),
+      searchDelay
+    );
+  }
+  else{
+    intialise();
+  }
 };
 
 const openDropDown = () => {
   const dd = document.getElementById("dropdown-wrapper");
   dd.classList.toggle("open");
-}
+};
