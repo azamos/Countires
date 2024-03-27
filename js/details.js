@@ -26,22 +26,11 @@ const populateRightCol = (rightCol,TLD,Currencies,Languages) => {
   genAndAttachSpan(rightCol,'Languages',Languages);
 }
 
-const populateFields = () => {
+const populateFields = (
+  name,population,region,capital,imageURL,nativeName,subregion,TLD,
+  borders,currencies,languages
+) => {
   document.body.removeChild(document.getElementsByClassName("loader")[0]);
-
-  const name = getParameterByName("name");
-  const population = getParameterByName("population");
-  const region = getParameterByName("region");
-  const capital = getParameterByName("capital");
-  const imageURL = getParameterByName("flag");
-  const nativeName = getParameterByName("nativeName");
-  const subregion = getParameterByName("subregion");
-  const TLD = getParameterByName("TLD");
-  const borders = getParameterByName("borders").split(',');
-  const currencies = getParameterByName("currencies");
-  const languages = getParameterByName("languages");
-
-  // console.log({nativeName,subregion,TLD,borders,currencies,languages});
 
   const countryDetailsContainer =
     document.getElementsByClassName("country-details")[0];
@@ -63,7 +52,7 @@ const populateFields = () => {
 
   const leftCol = document.createElement('div');
   leftCol.className = "display-flex flex-col";
-  populateLeftCol(leftCol,name,population,region,subregion,capital);
+  populateLeftCol(leftCol,nativeName,population,region,subregion,capital);
 
   const rightCol = document.createElement('div');
   rightCol.className = "display-flex flex-col";
@@ -98,6 +87,31 @@ const populateFields = () => {
 
   countryDetailsContainer.appendChild(countryDiv);
 };
+
+/*
+    https://restcountries.com/v3.1/alpha?codes={code},{code},{code}
+ */
+const codesURL = "https://restcountries.com/v3.1/alpha?codes="
+
+const initialize = async() => {
+  const bordersCodes = getParameterByName("borders");
+  const codesURLWithValues = codesURL + bordersCodes +"&fields=name";
+  let borders = await fetch(codesURLWithValues).then(_=>_.json());
+  borders = borders.map(border=>border.name.common);
+
+  const name = getParameterByName("name");
+  const population = getParameterByName("population");
+  const region = getParameterByName("region");
+  const capital = getParameterByName("capital");
+  const imageURL = getParameterByName("flag");
+  const nativeName = getParameterByName("nativeName");
+  const subregion = getParameterByName("subregion");
+  const TLD = getParameterByName("TLD");
+  const currencies = getParameterByName("currencies");
+  const languages = getParameterByName("languages");
+  populateFields(name,population,region,capital,imageURL,
+    nativeName,subregion,TLD,borders,currencies,languages);
+}
 
 const getParameterByName = (name, url) => {
   if (!url) url = window.location.href;

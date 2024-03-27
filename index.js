@@ -126,7 +126,7 @@ const intialise = async () => {
   let countriesArr;
   if (!fromLs) {
     countriesArr = await fetch(getRelevantURL(allURL)).then((_) => _.json());
-    // console.log(countriesArr);
+    console.log(countriesArr);
     countriesArr = countriesArr.splice(0, limit);
 
     let stringed = JSON.stringify(countriesArr);
