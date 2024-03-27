@@ -96,9 +96,14 @@ const codesURL = "https://restcountries.com/v3.1/alpha?codes="
 const initialize = async() => {
   const bordersCodes = getParameterByName("borders");
   const codesURLWithValues = codesURL + bordersCodes +"&fields=name";
-  let borders = await fetch(codesURLWithValues).then(_=>_.json());
-  borders = borders.map(border=>border.name.common);
-
+  let borders;
+  if(bordersCodes.length){
+    borders = await fetch(codesURLWithValues).then(_=>_.json());
+    borders = borders.map(border=>border.name.common);
+  }
+  else{
+    borders = [];
+  }
   const name = getParameterByName("name");
   const population = getParameterByName("population");
   const region = getParameterByName("region");
