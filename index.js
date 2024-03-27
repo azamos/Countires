@@ -1,7 +1,8 @@
 const limit = 10;
-const relevantFields = "name,capital,flags,population,region";
+const relevantFields =
+  "tid,name,capital,flags,population,region,subregion,currencies,languages,borders";
 
-const getRelevantURL = url => `${url}?fields=${relevantFields}`;
+const getRelevantURL = (url) => `${url}?fields=${relevantFields}`;
 
 const freeChildren = (
   container = document.getElementById("countries-container")
@@ -17,7 +18,7 @@ const addInfoLi = (infoType, infoValue) => {
   strong.innerText = `${infoType}: `;
   li.appendChild(strong);
   const p = document.createElement("p");
-  if(!infoValue){
+  if (!infoValue) {
     infoValue = "N/A";
   }
   p.innerText = infoValue.toString();
@@ -54,13 +55,59 @@ const addCountryInfo = (commonName, population, region, capital) => {
   return countryInfoDiv;
 };
 
+const showDetails = (details) => {
+  console.log(details);
+};
+
+const arrayToString = arr => {
+  let strResult = "";
+  if(arr && arr.length){
+    strResult = arr.join(',');
+  }
+  return strResult;
+}
+
+const buildQueryStr = queryData => {
+  const {commonName,capital,population,region,svg,nativeName,subregion,TLD,
+  borders,currencies,languages} = queryData;
+  const hrefP1 = `./details.html?name=${commonName}&capital=${capital}&population=${population}&region=${region}&flag=${svg}`;
+  const hrefP2 = `&nativeName=${nativeName}&subregion=${subregion}&TLD=${TLD}`;
+  const borderStr = arrayToString(borders);
+  const currecnyStr = arrayToString(Object.keys(currencies).map(key=>currencies[key].name));
+  const langStr = arrayToString(Object.keys(languages).map(key=>languages[key]));
+  return`${hrefP1}&${hrefP2}&borders=${borderStr}&currencies=${currecnyStr}&languages=${langStr}`;
+
+}
+
 const addCountryHTML = (countryData) => {
-  const { flags, capital, name, population, region } = countryData;
+  const {
+    flags,
+    capital,
+    name,
+    population,
+    region,
+    subregion,
+    currencies,
+    languages,
+    borders,
+    tld,
+  } = countryData;
+
   const commonName = name.common;
+
+  let nativeName = name.nativeName;
+  const firstKey = Object.keys(nativeName)[0];
+  nativeName = nativeName[firstKey].common;
+
+  const TLD = tld[0];
+  
   const { svg } = flags;
 
   const newHTML = document.createElement("a");
-  newHTML.href = "#";
+
+  newHTML.href = buildQueryStr({commonName,capital,population,region,svg,nativeName,subregion,TLD,
+    borders,currencies,languages});
+
   newHTML.className = "country scale-effect";
   newHTML.setAttribute("data-country-name", commonName);
 
@@ -70,8 +117,7 @@ const addCountryHTML = (countryData) => {
   document.getElementById("countries-container").appendChild(newHTML);
 };
 
-const allURL =
-  "https://restcountries.com/v3.1/all?fields=name,capital,flags,population,region";
+const allURL = "https://restcountries.com/v3.1/all";
 const COUNTRIES_KEY = "Countries";
 
 const intialise = async () => {
@@ -80,8 +126,9 @@ const intialise = async () => {
   let countriesArr;
   if (!fromLs) {
     countriesArr = await fetch(getRelevantURL(allURL)).then((_) => _.json());
+    // console.log(countriesArr);
     countriesArr = countriesArr.splice(0, limit);
-    console.log(countriesArr);
+
     let stringed = JSON.stringify(countriesArr);
     localStorage.setItem(COUNTRIES_KEY, stringed);
   } else {
@@ -102,10 +149,12 @@ const searchByRegion = async (region) => {
 
 const nameURL = "https://restcountries.com/v3.1/name";
 
-const fetchAutoComSuggestions = async partialMatch => {
+const fetchAutoComSuggestions = async (partialMatch) => {
   const thisNameURL = `${nameURL}/${partialMatch.trim()}`;
   try {
-    let matches = await fetch(getRelevantURL(thisNameURL)).then(_=>_.json());
+    let matches = await fetch(getRelevantURL(thisNameURL)).then((_) =>
+      _.json()
+    );
     if (matches.length) {
       freeChildren();
       matches.forEach((p) => addCountryHTML(p));
@@ -128,8 +177,7 @@ const searchInputChanged = async (e) => {
       async () => await fetchAutoComSuggestions(value.trim()),
       searchDelay
     );
-  }
-  else{
+  } else {
     intialise();
   }
 };
@@ -138,20 +186,3 @@ const openDropDown = () => {
   const dd = document.getElementById("dropdown-wrapper");
   dd.classList.toggle("open");
 };
-
-let darkMode = false;
-const toggleTheme = () => {
-  document.body.classList.toggle("dark-theme");
-  let iconEl;
-  if (darkMode){
-    document.getElementsByClassName("theme-text")[0].innerText = "Dark mode";
-    iconEl = document.getElementsByClassName("fa-sun")[0];
-  }
-  else{
-    document.getElementsByClassName("theme-text")[0].innerText = "Light mode";
-    iconEl = document.getElementsByClassName("fa-moon")[0];
-  }
-  iconEl.classList.toggle("fa-moon");
-  iconEl.classList.toggle("fa-sun");
-  darkMode = !darkMode;
-}
