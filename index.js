@@ -1,4 +1,7 @@
 const limit = 10;
+const relevantFields = "name,capital,flags,population,region";
+
+const getRelevantURL = url => `${url}?fields=${relevantFields}`;
 
 const freeChildren = (
   container = document.getElementById("countries-container")
@@ -67,7 +70,7 @@ const addCountryHTML = (countryData) => {
   document.getElementById("countries-container").appendChild(newHTML);
 };
 
-const relevantDataURL =
+const allURL =
   "https://restcountries.com/v3.1/all?fields=name,capital,flags,population,region";
 const COUNTRIES_KEY = "Countries";
 
@@ -76,8 +79,9 @@ const intialise = async () => {
   const fromLs = localStorage.getItem(COUNTRIES_KEY);
   let countriesArr;
   if (!fromLs) {
-    countriesArr = await fetch(relevantDataURL).then((_) => _.json());
+    countriesArr = await fetch(getRelevantURL(allURL)).then((_) => _.json());
     countriesArr = countriesArr.splice(0, limit);
+    console.log(countriesArr);
     let stringed = JSON.stringify(countriesArr);
     localStorage.setItem(COUNTRIES_KEY, stringed);
   } else {
@@ -90,7 +94,7 @@ const regionURL = "https://restcountries.com/v3.1/region";
 const searchByRegion = async (region) => {
   const thisRegionURL = `${regionURL}/${region}`;
   freeChildren();
-  regionCountires = await fetch(thisRegionURL)
+  regionCountires = await fetch(getRelevantURL(thisRegionURL))
     .then((_) => _.json())
     .catch((e) => console.log(e));
   regionCountires.forEach((cInReg) => addCountryHTML(cInReg));
@@ -101,7 +105,7 @@ const nameURL = "https://restcountries.com/v3.1/name";
 const fetchAutoComSuggestions = async partialMatch => {
   const thisNameURL = `${nameURL}/${partialMatch.trim()}`;
   try {
-    let matches = await fetch(thisNameURL).then(_=>_.json());
+    let matches = await fetch(getRelevantURL(thisNameURL)).then(_=>_.json());
     if (matches.length) {
       freeChildren();
       matches.forEach((p) => addCountryHTML(p));
@@ -134,3 +138,20 @@ const openDropDown = () => {
   const dd = document.getElementById("dropdown-wrapper");
   dd.classList.toggle("open");
 };
+
+let darkMode = false;
+const toggleTheme = () => {
+  document.body.classList.toggle("dark-theme");
+  let iconEl;
+  if (darkMode){
+    document.getElementsByClassName("theme-text")[0].innerText = "Dark mode";
+    iconEl = document.getElementsByClassName("fa-sun")[0];
+  }
+  else{
+    document.getElementsByClassName("theme-text")[0].innerText = "Light mode";
+    iconEl = document.getElementsByClassName("fa-moon")[0];
+  }
+  iconEl.classList.toggle("fa-moon");
+  iconEl.classList.toggle("fa-sun");
+  darkMode = !darkMode;
+}
