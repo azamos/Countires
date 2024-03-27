@@ -53,19 +53,19 @@
           <i class="fa-regular fa-magnifying-glass search-icon"></i>
           <input oninput="searchInputChanged(event)"  type="text" class="search-input" placeholder="Search for a country..." />
         </div>
-        <div class="dropdown-wrapper">
+        <div id="dropdown-wrapper" class="dropdown-wrapper" onclick="openDropDown()">
           <div class="dropdown-header flex flex-jc-sb flex-ai-c">
-            <span>Filter by Region</span>
+            <span >Filter by Region</span>
             <i class="fa-regular fa-chevron-down icon"></i>
           </div>
           <div class="dropdown-body">
             <ul>
-              <li data-region="all">all</li>
-              <li data-region="africa">africa</li>
-              <li data-region="americas">america</li>
-              <li data-region="asia">asia</li>
-              <li data-region="europe">europe</li>
-              <li data-region="oceania">oceania</li>
+              <li data-region="all" onclick="intialise()">all</li>
+              <li data-region="africa" onclick="searchByRegion('africa')">africa</li>
+              <li data-region="americas" onclick="searchByRegion('americas')">america</li>
+              <li data-region="asia" onclick="searchByRegion('asia')">asia</li>
+              <li data-region="europe" onclick="searchByRegion('europe')">europe</li>
+              <li data-region="oceania" onclick="searchByRegion('oceania')">oceania</li>
             </ul>
           </div>
         </div>

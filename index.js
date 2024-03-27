@@ -1,5 +1,13 @@
 const limit = 10;
 
+const freeChildren = (
+  container = document.getElementById("countries-container")
+) => {
+  while(container.firstChild){
+    container.removeChild(container.firstChild);
+  }
+};
+
 const addInfoLi = (infoType, infoValue) => {
   const li = document.createElement("li");
   const strong = document.createElement("strong");
@@ -56,22 +64,31 @@ const addCountryHTML = (countryData) => {
   document.getElementById("countries-container").appendChild(newHTML);
 };
 
-const relevantDataURL = "https://restcountries.com/v3.1/all?fields=name,capital,flags,population,region";
+const relevantDataURL =
+  "https://restcountries.com/v3.1/all?fields=name,capital,flags,population,region";
 const COUNTRIES_KEY = "Countries";
+
 const intialise = async () => {
+  freeChildren();
   const fromLs = localStorage.getItem(COUNTRIES_KEY);
   let countriesArr;
-  if(!fromLs){
-    countriesArr = await fetch(relevantDataURL).then(_=>_.json());
-    console.log(countriesArr);
-    countriesArr = countriesArr.splice(0,limit);
+  if (!fromLs) {
+    countriesArr = await fetch(relevantDataURL).then((_) => _.json());
+    countriesArr = countriesArr.splice(0, limit);
     let stringed = JSON.stringify(countriesArr);
-    localStorage.setItem(COUNTRIES_KEY,stringed);
-  }
-  else{
+    localStorage.setItem(COUNTRIES_KEY, stringed);
+  } else {
     countriesArr = JSON.parse(fromLs);
   }
-  countriesArr.forEach(countryInfo => addCountryHTML(countryInfo));
+  countriesArr.forEach((countryInfo) => addCountryHTML(countryInfo));
+};
+
+const regionURL = "https://restcountries.com/v3.1/region";
+const searchByRegion = async region => {
+  const thisRegionURL = `${regionURL}/${region}`;
+  freeChildren();
+  regionCountires = await fetch(thisRegionURL).then(_=>_.json()).catch(e=>console.log(e));
+  regionCountires.forEach(cInReg=>addCountryHTML(cInReg));
 };
 
 const searchDelay = 300;
@@ -81,3 +98,8 @@ const searchInputChanged = async (e) => {
 
   // },300)
 };
+
+const openDropDown = () => {
+  const dd = document.getElementById("dropdown-wrapper");
+  dd.classList.toggle("open");
+}
