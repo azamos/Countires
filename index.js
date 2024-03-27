@@ -1,4 +1,3 @@
-const URL = "https://restcountries.com/v3.1/all";
 const limit = 10;
 
 const addInfoLi = (infoType, infoValue) => {
@@ -57,17 +56,15 @@ const addCountryHTML = (countryData) => {
   document.getElementById("countries-container").appendChild(newHTML);
 };
 
+const relevantDataURL = "https://restcountries.com/v3.1/all?fields=name,capital,flags,population,region";
 const COUNTRIES_KEY = "Countries";
 const intialise = async () => {
   const fromLs = localStorage.getItem(COUNTRIES_KEY);
   let countriesArr;
   if(!fromLs){
-    countriesArr = await fetch(URL).then(_=>_.json());
+    countriesArr = await fetch(relevantDataURL).then(_=>_.json());
+    console.log(countriesArr);
     countriesArr = countriesArr.splice(0,limit);
-    countriesArr = 
-    countriesArr.map(
-      ({flags, capital, name, population, region})=>
-      ({flags, capital, name, population, region}));
     let stringed = JSON.stringify(countriesArr);
     localStorage.setItem(COUNTRIES_KEY,stringed);
   }
@@ -77,7 +74,10 @@ const intialise = async () => {
   countriesArr.forEach(countryInfo => addCountryHTML(countryInfo));
 };
 
+const searchDelay = 300;
 const searchInputChanged = async (e) => {
   const { value } = e.target;
-  console.log(value);
+  // const searchRequest = setTimeout(()=>{
+
+  // },300)
 };
