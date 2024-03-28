@@ -89,9 +89,6 @@ const populateFields = (
   countryDetailsContainer.appendChild(countryDiv);
 };
 
-/*
-    https://restcountries.com/v3.1/alpha?codes={code},{code},{code}
- */
 const codesURL = "https://restcountries.com/v3.1/alpha?codes="
 
 const initialize = async() => {

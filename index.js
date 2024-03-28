@@ -54,10 +54,6 @@ const addCountryInfo = (commonName, population, region, capital) => {
   return countryInfoDiv;
 };
 
-const showDetails = (details) => {
-  console.log(details);
-};
-
 const arrayToString = arr => {
   let strResult = "";
   if(arr && arr.length){
