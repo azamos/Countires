@@ -1,4 +1,3 @@
-const limit = 10;
 const relevantFields =
   "tld,name,capital,flags,population,region,subregion,currencies,languages,borders";
 
@@ -45,7 +44,7 @@ const addCountryInfo = (commonName, population, region, capital) => {
 
   const ul = document.createElement("ul");
   ul.className = "country-brief";
-  const population_li = addInfoLi("population", population);
+  const population_li = addInfoLi("population", formatInteger(population));
   const region_li = addInfoLi("region", region);
   const capital_li = addInfoLi("capital", capital);
   ul.appendChild(population_li);
@@ -97,7 +96,7 @@ const addCountryHTML = (countryData) => {
 
   let nativeName = name.nativeName;
   const firstKey = Object.keys(nativeName)[0];
-  nativeName = nativeName[firstKey].common;
+  nativeName = firstKey && nativeName[firstKey] ? nativeName[firstKey].common : commonName;
 
   const TLD = tld[0];
   
@@ -120,22 +119,28 @@ const addCountryHTML = (countryData) => {
 const allURL = "https://restcountries.com/v3.1/all";
 const COUNTRIES_KEY = "Countries";
 
-const intialise = async () => {
-  setThemeIfNeeded();
+const resetAndFetchAll = async () => {
+  localStorage.clear();
+  fetchAll();
+}
+
+const fetchAll = async () => {
   freeChildren();
   const fromLs = localStorage.getItem(COUNTRIES_KEY);
   let countriesArr;
   if (!fromLs) {
     countriesArr = await fetch(getRelevantURL(allURL)).then((_) => _.json());
-    console.log(countriesArr);
-    countriesArr = countriesArr.splice(0, limit);
-
     let stringed = JSON.stringify(countriesArr);
     localStorage.setItem(COUNTRIES_KEY, stringed);
   } else {
     countriesArr = JSON.parse(fromLs);
   }
   countriesArr.forEach((countryInfo) => addCountryHTML(countryInfo));
+}
+
+const intialise = async () => {
+  setThemeIfNeeded();
+  fetchAll();
 };
 
 const regionURL = "https://restcountries.com/v3.1/region";
@@ -146,6 +151,7 @@ const searchByRegion = async (region) => {
     .then((_) => _.json())
     .catch((e) => console.log(e));
   regionCountires.forEach((cInReg) => addCountryHTML(cInReg));
+  localStorage.setItem(COUNTRIES_KEY,JSON.stringify(regionCountires));
 };
 
 const nameURL = "https://restcountries.com/v3.1/name";
@@ -159,6 +165,7 @@ const fetchAutoComSuggestions = async (partialMatch) => {
     if (matches.length) {
       freeChildren();
       matches.forEach((p) => addCountryHTML(p));
+      localStorage.setItem(COUNTRIES_KEY,JSON.stringify(matches));
     }
   } catch (err) {
     console.error(err);
@@ -179,7 +186,7 @@ const searchInputChanged = async (e) => {
       searchDelay
     );
   } else {
-    intialise();
+    resetAndFetchAll();
   }
 };
 

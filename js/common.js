@@ -27,3 +27,5 @@ const toggleTheme = () => {
   localStorage.setItem(DARK_MODE,JSON.stringify(darkMode));
   applyTheme();
 };
+
+const formatInteger = numStr => parseInt(numStr).toLocaleString();

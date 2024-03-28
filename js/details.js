@@ -1,20 +1,19 @@
 
 const genAndAttachSpan = (anchor,statKey,statVal) => {
   const statSpan = document.createElement('span');
-  statSpan.innerText = `${statKey}:${statVal}`;
+  statSpan.innerText = `${statKey}: ${statVal}`;
   anchor.appendChild(statSpan);
 }
 
 const genAndAttachImg = (anchor,imageURL) => {
   const flagImage = document.createElement('img');
   flagImage.src = imageURL;
-  flagImage.setAttribute("width","100%");
   anchor.appendChild(flagImage);
 }
 
 const populateLeftCol = (leftCol,name,population,region,subregion,capital) => {
   genAndAttachSpan(leftCol,'Native name',name);
-  genAndAttachSpan(leftCol,'Population',population);
+  genAndAttachSpan(leftCol,'Population',formatInteger(population));
   genAndAttachSpan(leftCol,'Region',region);
   genAndAttachSpan(leftCol,'Subregion',subregion);
   genAndAttachSpan(leftCol,'Capital',capital);
@@ -30,7 +29,7 @@ const populateFields = (
   name,population,region,capital,imageURL,nativeName,subregion,TLD,
   borders,currencies,languages
 ) => {
-  document.body.removeChild(document.getElementsByClassName("loader")[0]);
+  document.getElementsByClassName("loader")[0].classList.add("close");
 
   const countryDetailsContainer =
     document.getElementsByClassName("country-details")[0];
@@ -39,16 +38,17 @@ const populateFields = (
   countryDiv.className = "display-flex flex-row";
 
   const flagDiv = document.createElement('div');
+  flagDiv.className = "country-flag";
   genAndAttachImg(flagDiv,imageURL);
   countryDiv.appendChild(flagDiv);
 
   const detailsDiv = document.createElement('div');
-  detailsDiv.className = "country-info display-flex flex-col";
-  const header = document.createElement('header');
+  detailsDiv.className = " display-flex flex-col spaced";
   const h1 = document.createElement('h1');
   h1.innerText = name;
-  header.appendChild(h1);
-  detailsDiv.appendChild(header);
+  const h1Div = document.createElement('div');
+  h1Div.appendChild(h1);
+  detailsDiv.appendChild(h1Div);
 
   const leftCol = document.createElement('div');
   leftCol.className = "display-flex flex-col";
@@ -74,7 +74,8 @@ const populateFields = (
   bordering.className="display-flex";
 
   borders.forEach(border=>{
-    let p = document.createElement('p');
+    let p = document.createElement('button');
+    p.className = "btn";
     p.innerText = border;
     bordering.appendChild(p);
   })
@@ -94,6 +95,7 @@ const populateFields = (
 const codesURL = "https://restcountries.com/v3.1/alpha?codes="
 
 const initialize = async() => {
+  setThemeIfNeeded();
   const bordersCodes = getParameterByName("borders");
   const codesURLWithValues = codesURL + bordersCodes +"&fields=name";
   let borders;

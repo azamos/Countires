@@ -65,9 +65,9 @@ body {
   object-fit: cover;
 }
 
-/* .country-info {
+.country-info {
   padding: 40px 0;
-} */
+}
 
 .country-info h1 {
   color: #111517;
@@ -136,11 +136,13 @@ body {
 .display-flex{
   display: flex;
   flex-direction: row;
-  /* justify-content: space-around; */
-  gap: 5vmax;
+  justify-content: space-between;
+  gap: 1vmin;
 }
 .flex-col{
   flex-direction: column;
-  gap:0;
-  justify-content: space-evenly;
+  justify-content: flex-start;
+}
+.flex-col.spaced{
+  justify-content: space-around;
 }
